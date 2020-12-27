@@ -1,29 +1,20 @@
+//generic imports
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
 require('dotenv').config()
 
+
+
+// import routes
+const authRoutes = require('./routes/auth')
+const validaToken = require('./routes/validate-token');
+const admin = require('./routes/admin');
+const nota = require('./routes/nota');
+const user = require('./routes/user');
+
+//app-express
 const app = express();
-
-// cors
-const cors = require('cors');
-var corsOptions = {
-    origin: '*', // Reemplazar con dominio
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-app.use(cors(corsOptions));
-
-// capturar body
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
-
-//Conexión a Base de datos
-// const uri = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@cluster0.1y8z3.mongodb.net/${process.env.DBNAME}?retryWrites=true&w=majority`;
-// mongoose.connect(uri,
-//     { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true, useFindAndModify:false, }
-// )
-// .then(() => console.log('Base de datos conectada'))
-// .catch(e => console.log('error db:', e))
 
 //modern connection
 const db = async()=>{
@@ -45,25 +36,30 @@ const db = async()=>{
 //execute db connection
 db(); 
 
-// import routes
-const authRoutes = require('./routes/auth')
-const validaToken = require('./routes/validate-token');
-const admin = require('./routes/admin');
-const notanueva = require('./routes/nota');
-const user = require('./routes/user');
+// cors
+const cors = require('cors');
+var corsOptions = {
+    origin: '*', // Reemplazar con dominio
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
 
-// route middlewares
-//midlewares es una funcion que se ejecuta antes de devolver en este caso o un mensaje, puede ser una validacion para que no se ejecute el archivo
+
+// middlewares
+app.use(cors(corsOptions));
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(bodyparser.json());
+
+
+
+
+
+
+// routes middlewares
 app.use('/api/user', authRoutes)
 app.use('/api/admin', validaToken, admin)
-// app.get('/', (req, res) => {
-//     res.json({
-//         estado: true,
-//         mensaje: 'funciona!'
-//     })
-// });
-app.use('/api', notanueva);
+app.use('/api', nota);
 app.use('/api', user);
+
 // Middleware para Vue.js router modo history
 const history = require('connect-history-api-fallback');
 app.use(history());
