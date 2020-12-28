@@ -3,7 +3,29 @@ const Nota = require("../models/nota");
 
 
 
-//agregar una nota
+/**
+ * @swagger   
+ * /api/notanueva: 
+ *  post:
+ *    summary: add a wish
+ *    description: add the title and description from the front end
+ *    requestBody: 
+ *      content:
+ *        application/json:
+ *          schema:
+ *            properties:
+ *              email:
+ *                  type: string
+ *                  description: email user valid
+ *              password:
+ *                  type: string
+ *                  description: password user valid
+ *    responses:
+ *      "200":
+ *         description: A successful response
+ *      "400":
+ *         description: A bad request response
+ */
 
 exports.create = async(req, res) => {
    const body = req.body;
@@ -20,7 +42,30 @@ exports.create = async(req, res) => {
    }
 };
 
-//Obtener nota (GET) con el _id
+/**
+ * @swagger   
+ * /api/nota: 
+ *  get:
+ *    summary: see wish list
+ *    description: shows all wishes entered
+ *    requestBody: 
+ *      content:
+ *        application/json:
+ *          schema:
+ *            properties:
+ *              email:
+ *                  type: string
+ *                  description: email user valid
+ *              password:
+ *                  type: string
+ *                  description: password user valid
+ *    responses:
+ *      "200":
+ *         description: A successful response
+ *      "400":
+ *         description: A bad request response
+ */
+
 exports.notaById = async(req, res)=>{
     const _id = req.params.id;
     try{
@@ -59,7 +104,7 @@ exports.remove = async(req, res)=>{
         const notaDB = await Nota.findByIdAndDelete({_id});
         if(!notaDB){
             return res.status(500).json({
-                mensaje:'No se encontro la nota',
+                mensaje:'No se encontro',
                 error
             })
 
@@ -83,7 +128,7 @@ exports.update = async(req, res)=>{
         const notaDB = await Nota.findByIdAndUpdate(_id, body, {new:true});
         if(!notaDB){
             return res.status(500).json({
-                mensaje:'No se encontro la nota',
+                mensaje:'No se encontro',
                 error
             })
 

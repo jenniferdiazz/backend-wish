@@ -2,6 +2,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyparser = require('body-parser');
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const morgan = require("morgan");
+const cookieparser = require("cookie-parser");
+const cors = require("cors");
+const expressValidator = require("express-validator");
 require('dotenv').config()
 
 
@@ -37,18 +43,43 @@ const db = async()=>{
 db(); 
 
 // cors
-const cors = require('cors');
-var corsOptions = {
-    origin: '*', // Reemplazar con dominio
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
+
+// var corsOptions = {
+//     origin: '*', // Reemplazar con dominio
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
 
 
 // middlewares
-app.use(cors(corsOptions));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
+app.use(morgan("dev"));
+app.use(cookieparser());
+//app.use(expressValidator);
+app.use(cors());
 
+
+// Extended: https://swagger.io/specification/#infoObject
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            version: "1.0.0",
+            title: "api-wish",
+            description: "",
+            contact: {
+                name: ""
+            },
+            servers: ["http://localhost:8001"]
+        }
+    },
+    // definition the apis with swagger 
+    apis: ['./routes/*.js']
+};
+
+// final definitions with swagger-express
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 
